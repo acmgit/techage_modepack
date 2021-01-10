@@ -235,6 +235,26 @@ local function control_player(pos, pos1, pos2, player_name)
 	end
 end	
 
+local function remote_off(player)
+    local pos = get_my_crane_pos(player)
+    if pos then
+        swap_node(pos, "off")
+        local meta = minetest.get_meta(pos)
+        meta:set_int("running", 0)
+        store_last_used(pos)
+
+    end -- if pos
+
+end -- function remote_off
+
+minetest.register_chatcommand("cran_off",{
+    param = "",
+    description = S("Turn's the cran remotly off."),
+    func = function(player)
+        remote_off(player)
+    end -- func
+})
+
 minetest.register_node("towercrane:mast_ctrl_on", {
 	description = S("Tower Crane Mast Ctrl On"),
 	drawtype = "node",
