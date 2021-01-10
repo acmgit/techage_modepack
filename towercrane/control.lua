@@ -148,12 +148,15 @@ local function store_last_used(pos)
 	meta:set_int("last_used", minetest.get_day_count() + DAYS_WITHOUT_USE)
 end
 
-local function stop_crane(pos, player)
+local function stop_crane(pos, player, chat)
 	swap_node(pos, "off")
 	local meta = minetest.get_meta(pos)
 	meta:set_int("running", 0)
 	store_last_used(pos)
-	place_player(pos, player)
+    print(type(chat))
+    if ( type(chat) == "nil"plaxe) then
+        place_player(pos, player)
+    end
 end
 
 local function start_crane(pos, player)
@@ -238,22 +241,10 @@ end
 local function remote_off(player)
     local pos = get_my_crane_pos(player)
     if pos then
-        swap_node(pos, "off")
-        local meta = minetest.get_meta(pos)
-        meta:set_int("running", 0)
-        store_last_used(pos)
-
+        stop_crane(pos, player, true)
     end -- if pos
 
 end -- function remote_off
-
-minetest.register_chatcommand("cran_off",{
-    param = "",
-    description = S("Turn's the cran remotly off."),
-    func = function(player)
-        remote_off(player)
-    end -- func
-})
 
 minetest.register_node("towercrane:mast_ctrl_on", {
 	description = S("Tower Crane Mast Ctrl On"),
@@ -346,6 +337,15 @@ minetest.register_on_dieplayer(function(player, reason)
 		end
 	end
 end)
+
+minetest.register_chatcommand("cran_off",{
+    param = "",
+    description = S("Turn's the cran remotly off."),
+    func = function(name)
+        local player = minetest.get_player_by_name(name)
+        remote_off(player)
+    end -- func
+})
 
 minetest.register_lbm({
 	label = "[towercrane] break down",
